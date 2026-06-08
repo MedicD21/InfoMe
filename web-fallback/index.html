@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>InfoMe</title>
+  <meta name="description" content="A digital contact card — save to your phone or follow on social media." />
+  <link rel="stylesheet" href="/style.css" />
+  <!-- Universal Links route Apple devices straight to the App Clip / app.
+       This page only renders for Android, desktop browsers, or anywhere
+       App Clips can't load — "share with anyone, any device" stays true. -->
+  <script src="https://cdn.jsdelivr.net/pako/1.0.3/pako_inflate.min.js"></script>
+  <script src="https://cdn.apple-cloudkit.com/ck/2/cloudkit.js"></script>
+</head>
+<body>
+  <main id="app" class="loading">
+    <div class="spinner" aria-hidden="true"></div>
+    <p class="status">Loading card…</p>
+  </main>
+
+  <template id="card-template">
+    <div class="card">
+      <div class="avatar" data-role="avatar"></div>
+      <h1 data-role="name"></h1>
+      <p class="subtitle" data-role="subtitle"></p>
+      <p class="bio" data-role="bio"></p>
+
+      <a class="save-button" data-role="save" download="contact.vcf">
+        <span>⬇️ Save to Contacts (.vcf)</span>
+      </a>
+
+      <div class="social-grid" data-role="socials"></div>
+
+      <p class="footer">Shared via InfoMe · <a href="https://infome.app">Make your own card</a></p>
+    </div>
+  </template>
+
+  <script src="/app.js"></script>
+</body>
+</html>
