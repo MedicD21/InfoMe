@@ -22,6 +22,7 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
     case spotify
     case cashApp
     case venmo
+    case appleCash
     case paypalMe
     case koFi
     case buyMeACoffee
@@ -52,6 +53,7 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
         case .spotify: return "Spotify"
         case .cashApp: return "Cash App"
         case .venmo: return "Venmo"
+        case .appleCash: return "Apple Cash"
         case .paypalMe: return "PayPal"
         case .koFi: return "Ko-fi"
         case .buyMeACoffee: return "Buy Me a Coffee"
@@ -84,6 +86,7 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
         case .spotify: return "waveform.circle.fill"
         case .cashApp: return "dollarsign.circle.fill"
         case .venmo: return "v.circle.fill"
+        case .appleCash: return "apple.logo"
         case .paypalMe: return "p.circle.fill"
         case .koFi: return "cup.and.saucer.fill"
         case .buyMeACoffee: return "mug.fill"
@@ -114,6 +117,7 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
         case .spotify: return Color(red: 0.11, green: 0.73, blue: 0.33)
         case .cashApp: return Color(red: 0.0, green: 0.84, blue: 0.25)
         case .venmo: return Color(red: 0.0, green: 0.47, blue: 0.91)
+        case .appleCash: return Color(red: 0.18, green: 0.74, blue: 0.35)
         case .paypalMe: return Color(red: 0.0, green: 0.28, blue: 0.68)
         case .koFi: return Color(red: 0.17, green: 0.73, blue: 0.88)
         case .buyMeACoffee: return Color(red: 1.0, green: 0.78, blue: 0.12)
@@ -128,7 +132,7 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
     /// rather than a free-form URL (controls which editor field is shown).
     public var usesHandle: Bool {
         switch self {
-        case .website, .stripePaymentLink, .zelle:
+        case .website, .appleCash, .stripePaymentLink, .zelle:
             return false
         default:
             return true
@@ -141,6 +145,7 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
         case .website: return "https://example.com"
         case .cashApp: return "$cashtag"
         case .venmo: return "Venmo username"
+        case .appleCash: return "phone number or email"
         case .paypalMe: return "PayPal.Me username"
         case .koFi: return "Ko-fi username"
         case .buyMeACoffee: return "Buy Me a Coffee username"
@@ -155,7 +160,7 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
     public func displayHandle(for handle: String) -> String {
         let h = normalizedHandle(from: handle)
         switch self {
-        case .website, .stripePaymentLink, .zelle:
+        case .website, .appleCash, .stripePaymentLink, .zelle:
             return handle.trimmingCharacters(in: .whitespacesAndNewlines)
         case .cashApp:
             return h.hasPrefix("$") ? h : "$\(h)"
@@ -195,6 +200,8 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
         case .spotify: return URL(string: "spotify://user/\(h)")
         case .cashApp: return URL(string: "cashme://cash.app/$\(h.removingPrefix("$"))")
         case .venmo: return URL(string: "venmo://users/\(h)")
+        case .appleCash:
+            return URL(string: "sms:\(h)")
         case .paypalMe, .koFi, .buyMeACoffee, .patreon, .stripePaymentLink, .zelle, .website:
             return nil
         }
@@ -228,6 +235,8 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
         case .koFi: return URL(string: "https://ko-fi.com/\(h)")
         case .buyMeACoffee: return URL(string: "https://www.buymeacoffee.com/\(h)")
         case .patreon: return URL(string: "https://www.patreon.com/\(h)")
+        case .appleCash:
+            return URL(string: "sms:\(h)")
         case .stripePaymentLink, .zelle, .website:
             return URL(string: h.hasPrefix("http") ? h : "https://\(h)")
         }

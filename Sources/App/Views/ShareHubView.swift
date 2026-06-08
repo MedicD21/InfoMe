@@ -32,7 +32,7 @@ struct ShareHubView: View {
                 }
                 .ignoresSafeArea()
             }
-            .navigationTitle("Share")
+            .navigationTitle("InfoMe Card")
             .task { await viewModel.refreshLinkIfNeeded(card: store.card, store: store) }
             .onChange(of: store.card) { _, newCard in
                 Task { await viewModel.refreshLinkIfNeeded(card: newCard, store: store) }
