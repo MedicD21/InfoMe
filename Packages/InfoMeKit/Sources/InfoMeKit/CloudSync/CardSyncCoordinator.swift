@@ -16,8 +16,8 @@ public final class CardSyncCoordinator: NSObject, ObservableObject {
 
     private let store: CardStore
 
-    public init(store: CardStore = .shared) {
-        self.store = store
+    public init(store: CardStore? = nil) {
+        self.store = store ?? .shared
         super.init()
     }
 

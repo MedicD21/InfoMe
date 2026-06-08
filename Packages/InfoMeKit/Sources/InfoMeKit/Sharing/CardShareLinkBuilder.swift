@@ -37,7 +37,12 @@ public enum CardShareLinkBuilder {
     ) async throws -> (url: URL, shortCode: String?) {
         switch mode {
         case .hosted:
-            let code = try await existingShortCode ?? cloudStore.generateAvailableShortCode()
+            let code: String
+            if let existingShortCode {
+                code = existingShortCode
+            } else {
+                code = await cloudStore.generateAvailableShortCode()
+            }
             try await cloudStore.publish(card, shortCode: code)
             return (CardLinkConfiguration.shareURL(shortCode: code), code)
 

@@ -82,6 +82,13 @@ public enum CardLinkCodec {
             }
             defer { compression_stream_destroy(&stream) }
 
+            // `compression_stream_init` zeroes out the buffer pointers/sizes,
+            // so they must be (re)assigned after init, not just at construction.
+            stream.src_ptr = sourceBuffer.baseAddress ?? UnsafePointer(destinationBuffer)
+            stream.src_size = sourceBuffer.count
+            stream.dst_ptr = destinationBuffer
+            stream.dst_size = bufferSize
+
             let flags = Int32(COMPRESSION_STREAM_FINALIZE.rawValue)
 
             loop: while true {

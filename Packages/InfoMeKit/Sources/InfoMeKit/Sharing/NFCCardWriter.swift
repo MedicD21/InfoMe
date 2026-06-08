@@ -85,7 +85,7 @@ public final class NFCCardWriter: NSObject, ObservableObject {
 }
 
 extension NFCCardWriter: NFCTagReaderSessionDelegate {
-    public func tagReaderSessionDidBecomeActive(_ session: NFCTagReaderSession) {}
+    public nonisolated func tagReaderSessionDidBecomeActive(_ session: NFCTagReaderSession) {}
 
     public nonisolated func tagReaderSession(_ session: NFCTagReaderSession, didInvalidateWithError error: Error) {
         Task { @MainActor in
