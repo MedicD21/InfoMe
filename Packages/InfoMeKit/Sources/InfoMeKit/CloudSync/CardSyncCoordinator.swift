@@ -31,6 +31,10 @@ public final class CardSyncCoordinator: NSObject, ObservableObject {
     /// Call after every local save so the counterpart device picks up the change.
     public func pushCurrentCard() {
         guard WCSession.isSupported(), WCSession.default.activationState == .activated else { return }
+        #if os(iOS)
+        guard WCSession.default.isWatchAppInstalled else { return }
+        #endif
+
         guard let data = try? JSONEncoder().encode(store.card) else { return }
         var context: [String: Any] = ["card": data]
         if let shortCode = store.shortCode { context["shortCode"] = shortCode }

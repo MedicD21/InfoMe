@@ -9,11 +9,11 @@
 	</array>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
-		<string>$(ICLOUD_CONTAINER_ID)</string>
+		<string>iCloud.com.dushin.infome</string>
 	</array>
 	<key>com.apple.developer.icloud-services</key>
 	<array>
-		<string>CloudKit</string>
+		<string>CloudKit-Anonymous</string>
 	</array>
 	<key>com.apple.developer.parent-application-identifiers</key>
 	<array>
