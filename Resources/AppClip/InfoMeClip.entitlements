@@ -17,7 +17,7 @@
 	</array>
 	<key>com.apple.developer.parent-application-identifiers</key>
 	<array>
-		<string>$(AppIdentifierPrefix)com.example.infome</string>
+		<string>$(AppIdentifierPrefix)com.dushin.infome</string>
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>

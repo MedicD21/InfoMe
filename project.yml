@@ -126,10 +126,10 @@ targets:
           - "appclips:$(SHARE_DOMAIN)"
           - "applinks:$(SHARE_DOMAIN)"
         com.apple.developer.parent-application-identifiers:
-          - "$(AppIdentifierPrefix)com.example.infome"
+          - "$(AppIdentifierPrefix)com.dushin.infome"
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.infome.Clip
+        PRODUCT_BUNDLE_IDENTIFIER: com.dushin.infome.Clip
         PRODUCT_NAME: InfoMeClip
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
       groups: [shared]
@@ -159,7 +159,7 @@ targets:
         NSUserActivityTypes:
           - OpenCardIntent
         CFBundleURLTypes:
-          - CFBundleURLName: com.example.infome.share
+          - CFBundleURLName: com.dushin.infome.share
             CFBundleURLSchemes:
               - infome
     entitlements:
@@ -173,11 +173,11 @@ targets:
           - CloudKit
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.infome.watchkitapp
+        PRODUCT_BUNDLE_IDENTIFIER: com.dushin.infome.watchkitapp
         PRODUCT_NAME: "InfoMe Watch App"
         SKIP_INSTALL: NO
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.example.infome
+        INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.dushin.infome
       groups: [shared]
 
   # ------------------------------------------------------------------
@@ -206,7 +206,7 @@ targets:
           - "$(APP_GROUP_ID)"
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.infome.Widgets
+        PRODUCT_BUNDLE_IDENTIFIER: com.dushin.infome.Widgets
         PRODUCT_NAME: InfoMeWidgets
         SKIP_INSTALL: YES
       groups: [shared]
@@ -236,7 +236,7 @@ targets:
           - "$(APP_GROUP_ID)"
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.infome.watchkitapp.Widgets
+        PRODUCT_BUNDLE_IDENTIFIER: com.dushin.infome.watchkitapp.Widgets
         PRODUCT_NAME: InfoMeWatchWidgets
         SKIP_INSTALL: YES
       groups: [shared]
