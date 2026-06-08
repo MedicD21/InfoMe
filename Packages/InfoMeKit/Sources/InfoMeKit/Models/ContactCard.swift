@@ -18,8 +18,7 @@ public struct SocialLink: Identifiable, Codable, Hashable, Sendable {
     public var webURL: URL? { platform.profileURL(for: handle) }
 
     public var displayHandle: String {
-        if platform == .website { return handle }
-        return handle.hasPrefix("@") ? handle : "@\(handle)"
+        platform.displayHandle(for: handle)
     }
 }
 

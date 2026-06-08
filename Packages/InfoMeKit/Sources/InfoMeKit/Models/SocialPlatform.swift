@@ -20,6 +20,14 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
     case whatsapp
     case telegram
     case spotify
+    case cashApp
+    case venmo
+    case paypalMe
+    case koFi
+    case buyMeACoffee
+    case patreon
+    case stripePaymentLink
+    case zelle
     case website
 
     public var id: String { rawValue }
@@ -42,6 +50,14 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
         case .whatsapp: return "WhatsApp"
         case .telegram: return "Telegram"
         case .spotify: return "Spotify"
+        case .cashApp: return "Cash App"
+        case .venmo: return "Venmo"
+        case .paypalMe: return "PayPal"
+        case .koFi: return "Ko-fi"
+        case .buyMeACoffee: return "Buy Me a Coffee"
+        case .patreon: return "Patreon"
+        case .stripePaymentLink: return "Stripe"
+        case .zelle: return "Zelle"
         case .website: return "Website"
         }
     }
@@ -66,6 +82,14 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
         case .whatsapp: return "phone.circle.fill"
         case .telegram: return "paperplane.circle.fill"
         case .spotify: return "waveform.circle.fill"
+        case .cashApp: return "dollarsign.circle.fill"
+        case .venmo: return "v.circle.fill"
+        case .paypalMe: return "p.circle.fill"
+        case .koFi: return "cup.and.saucer.fill"
+        case .buyMeACoffee: return "mug.fill"
+        case .patreon: return "person.crop.circle.badge.heart"
+        case .stripePaymentLink: return "creditcard.circle.fill"
+        case .zelle: return "banknote.fill"
         case .website: return "globe"
         }
     }
@@ -88,27 +112,70 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
         case .whatsapp: return Color(red: 0.15, green: 0.82, blue: 0.42)
         case .telegram: return Color(red: 0.16, green: 0.62, blue: 0.85)
         case .spotify: return Color(red: 0.11, green: 0.73, blue: 0.33)
+        case .cashApp: return Color(red: 0.0, green: 0.84, blue: 0.25)
+        case .venmo: return Color(red: 0.0, green: 0.47, blue: 0.91)
+        case .paypalMe: return Color(red: 0.0, green: 0.28, blue: 0.68)
+        case .koFi: return Color(red: 0.17, green: 0.73, blue: 0.88)
+        case .buyMeACoffee: return Color(red: 1.0, green: 0.78, blue: 0.12)
+        case .patreon: return Color(red: 1.0, green: 0.26, blue: 0.21)
+        case .stripePaymentLink: return Color(red: 0.39, green: 0.36, blue: 0.95)
+        case .zelle: return Color(red: 0.44, green: 0.12, blue: 0.73)
         case .website: return Color(red: 0.35, green: 0.38, blue: 0.42)
         }
     }
 
     /// `true` when this platform is identified by an `@handle`-style username
     /// rather than a free-form URL (controls which editor field is shown).
-    public var usesHandle: Bool { self != .website }
+    public var usesHandle: Bool {
+        switch self {
+        case .website, .stripePaymentLink, .zelle:
+            return false
+        default:
+            return true
+        }
+    }
 
     /// The placeholder shown in the username field of the editor.
     public var handlePlaceholder: String {
         switch self {
         case .website: return "https://example.com"
+        case .cashApp: return "$cashtag"
+        case .venmo: return "Venmo username"
+        case .paypalMe: return "PayPal.Me username"
+        case .koFi: return "Ko-fi username"
+        case .buyMeACoffee: return "Buy Me a Coffee username"
+        case .patreon: return "Patreon username"
+        case .stripePaymentLink: return "https://buy.stripe.com/..."
+        case .zelle: return "Zelle QR/payment link"
         case .whatsapp, .telegram: return "phone number or handle"
         default: return "username"
+        }
+    }
+
+    public func displayHandle(for handle: String) -> String {
+        let h = normalizedHandle(from: handle)
+        switch self {
+        case .website, .stripePaymentLink, .zelle:
+            return handle.trimmingCharacters(in: .whitespacesAndNewlines)
+        case .cashApp:
+            return h.hasPrefix("$") ? h : "$\(h)"
+        case .paypalMe:
+            return "paypal.me/\(h)"
+        case .koFi:
+            return "ko-fi.com/\(h)"
+        case .buyMeACoffee:
+            return "buymeacoffee.com/\(h)"
+        case .patreon:
+            return "patreon.com/\(h)"
+        default:
+            return h.hasPrefix("@") ? h : "@\(h)"
         }
     }
 
     /// Best-effort native-app deep link for a given handle. Tried first;
     /// if the app isn't installed, `profileURL` is used instead.
     public func appDeepLink(for handle: String) -> URL? {
-        let h = Self.normalize(handle)
+        let h = normalizedHandle(from: handle)
         guard !h.isEmpty else { return nil }
         switch self {
         case .instagram: return URL(string: "instagram://user?username=\(h)")
@@ -126,7 +193,10 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
         case .whatsapp: return URL(string: "https://wa.me/\(h)")
         case .telegram: return URL(string: "tg://resolve?domain=\(h)")
         case .spotify: return URL(string: "spotify://user/\(h)")
-        case .website: return nil
+        case .cashApp: return URL(string: "cashme://cash.app/$\(h.removingPrefix("$"))")
+        case .venmo: return URL(string: "venmo://users/\(h)")
+        case .paypalMe, .koFi, .buyMeACoffee, .patreon, .stripePaymentLink, .zelle, .website:
+            return nil
         }
     }
 
@@ -134,7 +204,7 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
     /// (which should not assume the recipient has any of these apps installed)
     /// and whenever the deep link can't be opened.
     public func profileURL(for handle: String) -> URL? {
-        let h = Self.normalize(handle)
+        let h = normalizedHandle(from: handle)
         guard !h.isEmpty else { return nil }
         switch self {
         case .instagram: return URL(string: "https://instagram.com/\(h)")
@@ -152,7 +222,14 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
         case .whatsapp: return URL(string: "https://wa.me/\(h)")
         case .telegram: return URL(string: "https://t.me/\(h)")
         case .spotify: return URL(string: "https://open.spotify.com/user/\(h)")
-        case .website: return URL(string: h.hasPrefix("http") ? h : "https://\(h)")
+        case .cashApp: return URL(string: "https://cash.app/$\(h.removingPrefix("$"))")
+        case .venmo: return URL(string: "https://venmo.com/\(h)")
+        case .paypalMe: return URL(string: "https://paypal.me/\(h)")
+        case .koFi: return URL(string: "https://ko-fi.com/\(h)")
+        case .buyMeACoffee: return URL(string: "https://www.buymeacoffee.com/\(h)")
+        case .patreon: return URL(string: "https://www.patreon.com/\(h)")
+        case .stripePaymentLink, .zelle, .website:
+            return URL(string: h.hasPrefix("http") ? h : "https://\(h)")
         }
     }
 
@@ -161,5 +238,53 @@ public enum SocialPlatform: String, Codable, CaseIterable, Identifiable, Hashabl
         var trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.hasPrefix("@") { trimmed.removeFirst() }
         return trimmed.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? trimmed
+    }
+
+    private func normalizedHandle(from raw: String) -> String {
+        var trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.hasPrefix("@") { trimmed.removeFirst() }
+
+        switch self {
+        case .cashApp:
+            trimmed = trimmed
+                .replacingOccurrences(of: "https://cash.app/", with: "")
+                .replacingOccurrences(of: "http://cash.app/", with: "")
+        case .venmo:
+            trimmed = trimmed
+                .replacingOccurrences(of: "https://venmo.com/", with: "")
+                .replacingOccurrences(of: "http://venmo.com/", with: "")
+        case .paypalMe:
+            trimmed = trimmed
+                .replacingOccurrences(of: "https://paypal.me/", with: "")
+                .replacingOccurrences(of: "http://paypal.me/", with: "")
+                .replacingOccurrences(of: "https://www.paypal.me/", with: "")
+                .replacingOccurrences(of: "http://www.paypal.me/", with: "")
+        case .koFi:
+            trimmed = trimmed
+                .replacingOccurrences(of: "https://ko-fi.com/", with: "")
+                .replacingOccurrences(of: "http://ko-fi.com/", with: "")
+        case .buyMeACoffee:
+            trimmed = trimmed
+                .replacingOccurrences(of: "https://buymeacoffee.com/", with: "")
+                .replacingOccurrences(of: "http://buymeacoffee.com/", with: "")
+                .replacingOccurrences(of: "https://www.buymeacoffee.com/", with: "")
+                .replacingOccurrences(of: "http://www.buymeacoffee.com/", with: "")
+        case .patreon:
+            trimmed = trimmed
+                .replacingOccurrences(of: "https://patreon.com/", with: "")
+                .replacingOccurrences(of: "http://patreon.com/", with: "")
+                .replacingOccurrences(of: "https://www.patreon.com/", with: "")
+                .replacingOccurrences(of: "http://www.patreon.com/", with: "")
+        default:
+            break
+        }
+
+        return Self.normalize(trimmed)
+    }
+}
+
+private extension String {
+    func removingPrefix(_ prefix: String) -> String {
+        hasPrefix(prefix) ? String(dropFirst(prefix.count)) : self
     }
 }

@@ -177,7 +177,7 @@ private struct AddSocialLinkSheet: View {
                 TextField(platform.handlePlaceholder, text: $handle)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
-                    .keyboardType(platform == .website ? .URL : .default)
+                    .keyboardType(platform.usesHandle ? .default : .URL)
             }
             .scrollContentBackground(.hidden)
             .background {
