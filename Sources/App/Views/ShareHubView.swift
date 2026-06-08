@@ -164,6 +164,7 @@ final class ShareHubViewModel: ObservableObject {
             if let code = result.shortCode {
                 store.setShortCode(code)
             }
+            syncQRImage(payload: result.url.absoluteString, store: store)
             lastPublishedCardHash = card.hashValue
             statusMessage = mode == .hosted ? "Published — your link will keep working as you edit your card." : "Ready to share — re-generate after any edits."
         } catch {
@@ -175,6 +176,23 @@ final class ShareHubViewModel: ObservableObject {
                 await regenerateLink(card: card, store: store)
             }
         }
+    }
+
+    /// Renders the QR code for the freshly-built share URL (Core Image is only
+    /// available here, on iOS) and syncs it to the Watch — which can't render
+    /// its own — over `WatchConnectivity` via `CardSyncCoordinator`.
+    private func syncQRImage(payload: String, store: CardStore) {
+        guard
+            let cgImage = QRCodeGenerator.image(
+                for: payload,
+                foreground: CGColor(gray: 0.05, alpha: 1),
+                background: CGColor(gray: 1, alpha: 1)
+            ),
+            let pngData = UIImage(cgImage: cgImage).pngData()
+        else { return }
+
+        store.setQRCodeImage(pngData)
+        CardSyncCoordinator.shared.pushCurrentCard()
     }
 }
 

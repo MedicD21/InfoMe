@@ -16,7 +16,14 @@ public final class CardStore: ObservableObject {
     @Published public private(set) var card: ContactCard
     @Published public private(set) var shortCode: String?
 
+    /// PNG bytes of the most recently rendered QR code. Rendered on the iPhone
+    /// (the only platform where Core Image — and therefore `QRCodeGenerator` —
+    /// is available) and synced to the Watch via `CardSyncCoordinator`, so
+    /// `SyncedQRCodeView` has something to show without needing Core Image.
+    @Published public private(set) var qrCodeImageData: Data?
+
     private let fileURL: URL?
+    private let qrImageFileURL: URL?
     private let defaults: UserDefaults?
 
     private enum DefaultsKey {
@@ -26,6 +33,7 @@ public final class CardStore: ObservableObject {
     public init(appGroupIdentifier: String = CardLinkConfiguration.appGroupIdentifier) {
         let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)
         self.fileURL = containerURL?.appendingPathComponent("card.json")
+        self.qrImageFileURL = containerURL?.appendingPathComponent("qr.png")
         self.defaults = UserDefaults(suiteName: appGroupIdentifier)
 
         if let fileURL, let data = try? Data(contentsOf: fileURL),
@@ -35,6 +43,9 @@ public final class CardStore: ObservableObject {
             self.card = .placeholder
         }
         self.shortCode = defaults?.string(forKey: DefaultsKey.shortCode)
+        if let qrImageFileURL {
+            self.qrCodeImageData = try? Data(contentsOf: qrImageFileURL)
+        }
     }
 
     /// Replaces the stored card and persists it to the App Group container.
@@ -49,6 +60,20 @@ public final class CardStore: ObservableObject {
     public func setShortCode(_ code: String) {
         shortCode = code
         defaults?.set(code, forKey: DefaultsKey.shortCode)
+    }
+
+    /// Stores the latest rendered QR PNG and persists it to the App Group
+    /// container so it survives relaunch — both the side that renders it
+    /// (iPhone) and the side that only displays a synced copy (Watch) call
+    /// this, via `CardSyncCoordinator`.
+    public func setQRCodeImage(_ data: Data?) {
+        qrCodeImageData = data
+        guard let qrImageFileURL else { return }
+        if let data {
+            try? data.write(to: qrImageFileURL, options: .atomic)
+        } else {
+            try? FileManager.default.removeItem(at: qrImageFileURL)
+        }
     }
 
     private func persist() {

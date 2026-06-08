@@ -43,32 +43,43 @@ public struct OpenCardIntent: AppIntent {
 
         return .result(
             dialog: IntentDialog("Here's your InfoMe card, ready to share."),
-            view: OpenCardSnippetView(card: store.card, shortCode: store.shortCode)
+            view: OpenCardSnippetView(card: store.card, shortCode: store.shortCode, qrImageData: store.qrCodeImageData)
         )
     }
 }
 
 /// Minimal "here's your QR" snippet shown by Siri/Shortcuts/Controls while
-/// the full app finishes launching to the share screen — reuses `QRCodeView`
-/// so it matches the in-app presentation exactly.
+/// the full app finishes launching to the share screen.
+///
+/// On platforms with Core Image, this renders the QR live via `QRCodeView` so
+/// it matches the in-app presentation exactly. On watchOS (no Core Image),
+/// it falls back to `qrImageData` — the PNG `CardSyncCoordinator` synced over
+/// from the iPhone — via `SyncedQRCodeView`.
 public struct OpenCardSnippetView: View {
     public let card: ContactCard
     public let shortCode: String?
+    public let qrImageData: Data?
 
-    public init(card: ContactCard, shortCode: String?) {
+    public init(card: ContactCard, shortCode: String?, qrImageData: Data? = nil) {
         self.card = card
         self.shortCode = shortCode
+        self.qrImageData = qrImageData
     }
 
     public var body: some View {
         VStack(spacing: 12) {
+            #if canImport(CoreImage)
             QRCodeView(payload: payloadURL.absoluteString, theme: card.theme, size: 180)
+            #else
+            SyncedQRCodeView(imageData: qrImageData, size: 180)
+            #endif
             Text(card.fullName)
                 .font(.headline)
         }
         .padding()
     }
 
+    #if canImport(CoreImage)
     private var payloadURL: URL {
         if let shortCode {
             return CardLinkConfiguration.shareURL(shortCode: shortCode)
@@ -76,6 +87,7 @@ public struct OpenCardSnippetView: View {
         let encoded = (try? CardLinkCodec.encode(card)) ?? ""
         return CardLinkConfiguration.offlineShareURL(encodedCard: encoded)
     }
+    #endif
 }
 
 /// Surfaces `OpenCardIntent` to Siri, Spotlight, and the Shortcuts app under

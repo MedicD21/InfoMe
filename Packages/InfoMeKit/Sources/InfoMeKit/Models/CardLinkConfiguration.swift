@@ -21,8 +21,8 @@ public enum CardLinkConfiguration {
         URL(string: "https://\(shareDomain)/c/\(encodedCard)")!
     }
 
-    public static let appGroupIdentifier = "group.com.example.infome"
-    public static let cloudKitContainerIdentifier = "iCloud.com.example.infome"
+    public static let appGroupIdentifier = "group.com.dushin.infome"
+    public static let cloudKitContainerIdentifier = "iCloud.com.dushin.infome"
     public static let cloudKitRecordType = "PublishedCard"
 
     /// Parses an incoming Universal Link / App Clip invocation URL into

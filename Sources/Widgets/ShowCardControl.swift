@@ -13,8 +13,9 @@ import InfoMeKit
 /// screen. This is in addition to — not instead of — the `AppShortcut` in
 /// `OpenCardIntent.swift`, since older OS versions only expose the
 /// Shortcut-based Action Button binding.
+@available(iOS 18.0, *)
 struct ShowCardControl: ControlWidget {
-    static let kind = "com.example.infome.ShowCardControl"
+    static let kind = "ShowCardControl"
 
     var body: some ControlWidgetConfiguration {
         StaticControlConfiguration(kind: Self.kind) {

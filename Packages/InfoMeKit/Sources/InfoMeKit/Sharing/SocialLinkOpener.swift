@@ -22,9 +22,21 @@ public enum SocialLinkOpener {
     @MainActor
     public static func open(_ link: SocialLink, using openURL: OpenURLAction) {
         let candidates = candidateURLs(for: link)
+        #if os(watchOS)
+        // The completion-handler overload of `OpenURLAction` (needed to detect
+        // a failed deep link and fall back to the web URL) isn't available on
+        // watchOS, and there's no other way to tell whether a deep link
+        // "took" — so just hand the system the best candidate and let it
+        // route to an installed app, Handoff to iPhone, or the web.
+        if let url = candidates.first {
+            _ = openURL(url)
+        }
+        #else
         attempt(candidates: candidates, index: 0, using: openURL)
+        #endif
     }
 
+    #if !os(watchOS)
     @MainActor
     private static func attempt(candidates: [URL], index: Int, using openURL: OpenURLAction) {
         guard index < candidates.count else { return }
@@ -34,4 +46,5 @@ public enum SocialLinkOpener {
             }
         }
     }
+    #endif
 }

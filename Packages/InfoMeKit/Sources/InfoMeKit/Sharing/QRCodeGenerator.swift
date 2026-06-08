@@ -1,3 +1,4 @@
+#if canImport(CoreImage)
 import CoreImage
 import CoreImage.CIFilterBuiltins
 import SwiftUI
@@ -82,3 +83,4 @@ public struct QRCodeView: View {
         .accessibilityHint(payload)
     }
 }
+#endif

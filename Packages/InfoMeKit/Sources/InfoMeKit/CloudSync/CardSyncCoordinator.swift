@@ -34,6 +34,10 @@ public final class CardSyncCoordinator: NSObject, ObservableObject {
         guard let data = try? JSONEncoder().encode(store.card) else { return }
         var context: [String: Any] = ["card": data]
         if let shortCode = store.shortCode { context["shortCode"] = shortCode }
+        // The Watch can't render QR codes itself (no Core Image), so it gets a
+        // pre-rendered PNG from whichever side last generated one — normally
+        // the iPhone, in `ShareHubViewModel.regenerateLink`.
+        if let qrImageData = store.qrCodeImageData { context["qrImage"] = qrImageData }
         try? WCSession.default.updateApplicationContext(context)
     }
 
@@ -47,6 +51,9 @@ public final class CardSyncCoordinator: NSObject, ObservableObject {
             store.save(card)
             if let shortCode = context["shortCode"] as? String {
                 store.setShortCode(shortCode)
+            }
+            if let qrImageData = context["qrImage"] as? Data {
+                store.setQRCodeImage(qrImageData)
             }
         }
     }

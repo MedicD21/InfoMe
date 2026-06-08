@@ -9,18 +9,10 @@ struct WatchQRView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            if let shortCode = store.shortCode {
-                QRCodeView(
-                    payload: CardLinkConfiguration.shareURL(shortCode: shortCode).absoluteString,
-                    theme: store.card.theme,
-                    size: qrSize
-                )
-            } else {
-                // No short code synced yet (first launch before the phone app
-                // has published) — fall back to the fully self-contained
-                // offline payload so the watch is never without something to show.
-                offlineQR
-            }
+            // The watch can't render QR codes itself (no Core Image on watchOS),
+            // so it just displays the PNG `CardSyncCoordinator` synced over from
+            // the iPhone, which renders it via `QRCodeGenerator`.
+            SyncedQRCodeView(imageData: store.qrCodeImageData, size: qrSize)
 
             Text(store.card.fullName)
                 .font(.system(.caption, design: .rounded, weight: .semibold))
@@ -37,19 +29,6 @@ struct WatchQRView: View {
         #else
         return 220
         #endif
-    }
-
-    @ViewBuilder
-    private var offlineQR: some View {
-        if let encoded = try? CardLinkCodec.encode(store.card) {
-            QRCodeView(
-                payload: CardLinkConfiguration.offlineShareURL(encodedCard: encoded).absoluteString,
-                theme: store.card.theme,
-                size: qrSize
-            )
-        } else {
-            ProgressView()
-        }
     }
 }
 
