@@ -86,7 +86,7 @@ struct NFCWriteSheet: View {
                 .font(.title2.bold())
             Text(message)
                 .font(.body)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.white.opacity(0.72))
         }
     }
 
@@ -104,7 +104,7 @@ struct NFCWriteSheet: View {
     private var message: String {
         switch writer.phase {
         case .idle:
-            return "Grab a blank NFC sticker or card (NTAG213/215 work great — they cost pennies), hold it near the top of your iPhone, and tap below."
+            return "Use a blank NFC sticker or card. Tap Write Tag, then hold the tag near the top of your iPhone."
         case .waitingForTag(let prompt):
             return prompt
         case .writing:
@@ -125,12 +125,10 @@ struct NFCWriteSheet: View {
             Button {
                 if let url { writer.writeShareLink(url) }
             } label: {
-                Label("Start Writing", systemImage: "wave.3.right")
+                Label("Write Tag", systemImage: "wave.3.right")
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
+            .buttonStyle(NFCPrimaryButtonStyle())
             .disabled(url == nil)
 
         case .success:
@@ -139,13 +137,32 @@ struct NFCWriteSheet: View {
             } label: {
                 Text("Done")
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
+            .buttonStyle(NFCPrimaryButtonStyle())
 
         case .waitingForTag, .writing, .readURL:
             EmptyView()
         }
+    }
+}
+
+private struct NFCPrimaryButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(.title3, design: .rounded, weight: .bold))
+            .foregroundStyle(isEnabled ? Color.black.opacity(0.82) : Color.white.opacity(0.42))
+            .padding(.vertical, 18)
+            .background(
+                Capsule()
+                    .fill(isEnabled ? Color(red: 0.78, green: 0.64, blue: 1.0) : Color.white.opacity(0.12))
+            )
+            .overlay(
+                Capsule()
+                    .strokeBorder(Color.white.opacity(isEnabled ? 0.28 : 0.10), lineWidth: 1)
+            )
+            .opacity(configuration.isPressed ? 0.82 : 1)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
     }
 }

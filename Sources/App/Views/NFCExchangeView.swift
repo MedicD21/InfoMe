@@ -20,9 +20,9 @@ struct NFCExchangeView: View {
                 VStack(spacing: 8) {
                     Text("Tap Someone's Tag")
                         .font(.title2.bold())
-                    Text("Hold your iPhone near another InfoMe NFC tag (or any tag carrying an InfoMe link) to instantly open their card.")
+                    Text("Scan an InfoMe NFC tag to open their card.")
                         .font(.body)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.72))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
                 }
@@ -32,12 +32,10 @@ struct NFCExchangeView: View {
                 Button {
                     reader.readTag()
                 } label: {
-                    Label(isReading ? "Listening…" : "Start Reading", systemImage: "wave.3.right")
+                    Label(isReading ? "Scanning…" : "Scan Tag", systemImage: "wave.3.right")
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+                .buttonStyle(NFCPrimaryButtonStyle())
                 .disabled(isReading)
                 .padding(.horizontal, 32)
 
@@ -86,5 +84,26 @@ struct NFCExchangeView: View {
         default:
             EmptyView()
         }
+    }
+}
+
+private struct NFCPrimaryButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(.title3, design: .rounded, weight: .bold))
+            .foregroundStyle(isEnabled ? Color.black.opacity(0.82) : Color.white.opacity(0.42))
+            .padding(.vertical, 18)
+            .background(
+                Capsule()
+                    .fill(isEnabled ? Color(red: 0.78, green: 0.64, blue: 1.0) : Color.white.opacity(0.12))
+            )
+            .overlay(
+                Capsule()
+                    .strokeBorder(Color.white.opacity(isEnabled ? 0.28 : 0.10), lineWidth: 1)
+            )
+            .opacity(configuration.isPressed ? 0.82 : 1)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
     }
 }
