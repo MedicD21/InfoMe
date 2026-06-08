@@ -155,6 +155,7 @@ targets:
       properties:
         CFBundleDisplayName: InfoMe
         WKApplication: true
+        WKCompanionAppBundleIdentifier: com.dushin.infome
         WKWatchOnly: false
         NSUserActivityTypes:
           - OpenCardIntent

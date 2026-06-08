@@ -37,6 +37,8 @@
 	</array>
 	<key>WKApplication</key>
 	<true/>
+	<key>WKCompanionAppBundleIdentifier</key>
+	<string>com.dushin.infome</string>
 	<key>WKWatchOnly</key>
 	<false/>
 </dict>
