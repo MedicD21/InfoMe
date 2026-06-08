@@ -13,6 +13,7 @@ struct InfoMeApp: App {
                 .environmentObject(store)
                 .environmentObject(incomingLinkRouter)
                 .environmentObject(syncCoordinator)
+                .preferredColorScheme(.dark)
                 .task {
                     syncCoordinator.activate()
                 }

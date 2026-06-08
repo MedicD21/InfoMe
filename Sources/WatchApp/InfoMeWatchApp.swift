@@ -12,6 +12,7 @@ struct InfoMeWatchApp: App {
             WatchRootView()
                 .environmentObject(store)
                 .environmentObject(navigationCoordinator)
+                .preferredColorScheme(.dark)
                 .task {
                     syncCoordinator.activate()
                 }

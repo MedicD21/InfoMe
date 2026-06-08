@@ -20,7 +20,12 @@ public enum CardLinkCodec {
     }
 
     /// Encodes a card to a base64url string suitable for embedding in a URL path.
-    public static func encode(_ card: ContactCard) throws -> String {
+    public static func encode(_ card: ContactCard, includingAvatar: Bool = true) throws -> String {
+        var card = card
+        if !includingAvatar {
+            card.avatarJPEGData = nil
+        }
+
         let json: Data
         do {
             json = try JSONEncoder().encode(card)

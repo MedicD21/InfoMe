@@ -20,6 +20,14 @@ struct EditCardView: View {
                 themeSection
                 socialsSection
             }
+            .scrollContentBackground(.hidden)
+            .background {
+                ZStack {
+                    Color.black
+                    CardTheme.midnight.backgroundGradient.opacity(0.22)
+                }
+                .ignoresSafeArea()
+            }
             .navigationTitle("My Card")
             .onAppear { draft = store.card }
             .onChange(of: draft) { _, newValue in
@@ -170,6 +178,14 @@ private struct AddSocialLinkSheet: View {
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .keyboardType(platform == .website ? .URL : .default)
+            }
+            .scrollContentBackground(.hidden)
+            .background {
+                ZStack {
+                    Color.black
+                    CardTheme.midnight.backgroundGradient.opacity(0.22)
+                }
+                .ignoresSafeArea()
             }
             .navigationTitle("Add Social Link")
             .navigationBarTitleDisplayMode(.inline)

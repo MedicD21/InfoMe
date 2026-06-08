@@ -70,12 +70,17 @@ public struct QRCodeView: View {
                 background: CGColor(gray: 1, alpha: 1)
             ) {
                 Image(decorative: cgImage, scale: 1, orientation: .up)
+                    .renderingMode(.original)
                     .interpolation(.none)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .padding(size * 0.09)
             } else {
-                ProgressView()
+                Label("QR unavailable", systemImage: "exclamationmark.triangle.fill")
+                    .font(.system(.caption, design: .rounded, weight: .semibold))
+                    .foregroundStyle(.black)
+                    .multilineTextAlignment(.center)
+                    .padding()
             }
         }
         .frame(width: size, height: size)

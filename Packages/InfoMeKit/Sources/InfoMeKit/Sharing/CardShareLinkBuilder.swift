@@ -47,7 +47,7 @@ public enum CardShareLinkBuilder {
             return (CardLinkConfiguration.shareURL(shortCode: code), code)
 
         case .offline:
-            guard let encoded = try? CardLinkCodec.encode(card) else {
+            guard let encoded = try? CardLinkCodec.encode(card, includingAvatar: false) else {
                 throw BuildError.offlineEncodingFailed
             }
             return (CardLinkConfiguration.offlineShareURL(encodedCard: encoded), nil)

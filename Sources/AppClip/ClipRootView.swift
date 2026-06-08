@@ -52,7 +52,13 @@ struct ClipRootView: View {
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.ultraThinMaterial)
+        .background {
+            ZStack {
+                Color.black
+                CardTheme.midnight.backgroundGradient.opacity(0.22)
+            }
+            .ignoresSafeArea()
+        }
     }
 
     private func failureView(message: String) -> some View {
@@ -64,6 +70,13 @@ struct ClipRootView: View {
             Button("Try Again") { viewModel.retry() }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background {
+            ZStack {
+                Color.black
+                CardTheme.midnight.backgroundGradient.opacity(0.22)
+            }
+            .ignoresSafeArea()
+        }
     }
 
     /// A subtle, dismissible nudge — separate from the system `appStoreOverlay`

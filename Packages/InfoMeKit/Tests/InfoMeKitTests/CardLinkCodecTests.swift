@@ -22,6 +22,18 @@ final class CardLinkCodecTests: XCTestCase {
         XCTAssertEqual(card, decoded)
     }
 
+    func testEncodingCanOmitAvatarForCompactOfflineLinks() throws {
+        var card = ContactCard.placeholder
+        card.avatarJPEGData = Data(repeating: 0xAB, count: 40_000)
+
+        let encoded = try CardLinkCodec.encode(card, includingAvatar: false)
+        let decoded = try CardLinkCodec.decode(encoded)
+
+        XCTAssertNil(decoded.avatarJPEGData)
+        XCTAssertEqual(card.givenName, decoded.givenName)
+        XCTAssertEqual(card.socialLinks, decoded.socialLinks)
+    }
+
     func testCompressionMeaningfullyShrinksRepetitiveContent() throws {
         var card = ContactCard.placeholder
         card.bio = String(repeating: "Let's connect! ", count: 40)

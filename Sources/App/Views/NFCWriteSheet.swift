@@ -21,7 +21,15 @@ struct NFCWriteSheet: View {
                 primaryButton
             }
             .padding(28)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .multilineTextAlignment(.center)
+            .background {
+                ZStack {
+                    Color.black
+                    CardTheme.midnight.backgroundGradient.opacity(0.22)
+                }
+                .ignoresSafeArea()
+            }
             .navigationTitle("Write NFC Tag")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

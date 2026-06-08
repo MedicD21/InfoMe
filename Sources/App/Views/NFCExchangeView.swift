@@ -49,7 +49,15 @@ struct NFCExchangeView: View {
 
                 Spacer()
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(.top, 48)
+            .background {
+                ZStack {
+                    Color.black
+                    CardTheme.midnight.backgroundGradient.opacity(0.22)
+                }
+                .ignoresSafeArea()
+            }
             .navigationTitle("NFC")
             .onChange(of: reader.phase) { _, phase in
                 if case .readURL(let url) = phase {

@@ -25,7 +25,13 @@ struct ShareHubView: View {
                 }
                 .padding(20)
             }
-            .background(store.card.theme.backgroundGradient.opacity(0.12).ignoresSafeArea())
+            .background {
+                ZStack {
+                    Color.black
+                    store.card.theme.backgroundGradient.opacity(0.22)
+                }
+                .ignoresSafeArea()
+            }
             .navigationTitle("Share")
             .task { await viewModel.refreshLinkIfNeeded(card: store.card, store: store) }
             .onChange(of: store.card) { _, newCard in
@@ -208,12 +214,31 @@ private struct ShareActionButton: View {
         Button(action: action) {
             Label(title, systemImage: systemImage)
                 .font(.system(.body, design: .rounded, weight: .semibold))
+                .foregroundStyle(isDisabled ? .white.opacity(0.48) : .white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
+                .background(buttonBackground, in: Capsule())
+                .overlay(
+                    Capsule()
+                        .strokeBorder(isDisabled ? .white.opacity(0.10) : tint.opacity(0.45), lineWidth: 1)
+                )
         }
-        .buttonStyle(.borderedProminent)
-        .tint(tint)
+        .buttonStyle(.plain)
         .controlSize(.large)
+    }
+
+    @Environment(\.isEnabled) private var isEnabled
+
+    private var isDisabled: Bool { !isEnabled }
+
+    private var buttonBackground: some ShapeStyle {
+        LinearGradient(
+            colors: isDisabled
+                ? [Color.white.opacity(0.10), Color.white.opacity(0.07)]
+                : [tint.opacity(0.34), Color.white.opacity(0.14)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 }
 

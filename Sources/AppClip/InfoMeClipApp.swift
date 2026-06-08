@@ -9,6 +9,7 @@ struct InfoMeClipApp: App {
         WindowGroup {
             ClipRootView()
                 .environmentObject(viewModel)
+                .preferredColorScheme(.dark)
                 // App Clips are launched *by* a URL — there's no "open the
                 // app and look around" step. Both invocation paths funnel
                 // into the same resolver so a QR scan and an NFC tap behave
